@@ -183,18 +183,13 @@
         Território
       </label>
 
-      <select id="territorio">
+    <select id="territorio">
 
-        <option value="">
-          Selecione
-        </option>
+  <option value="">
+    Carregando territórios...
+  </option>
 
-        <option value="T1">T1</option>
-        <option value="T2">T2</option>
-        <option value="T3">T3</option>
-        <option value="T4">T4</option>
-
-      </select>
+  </select>
 
     </div>
 
@@ -322,31 +317,63 @@
 
     // CHARGER RUAS
 
-    async function chargerRuas() {
+async function chargerRuas() {
 
-      try {
+  try {
 
-        const response =
-          await fetch(API_URL);
+    const response =
+      await fetch(API_URL);
 
-        const data =
-          await response.json();
+    const data =
+      await response.json();
 
-        window.ruasData = data;
+    window.ruasData = data;
 
-      }
 
-      catch(error) {
+    // TERRITÓRIOS ÚNICOS
 
-        console.error(
-          "Erro ao carregar ruas:",
-          error
-        );
+    const territoriosUnicos =
+      [...new Set(
 
-      }
+        data.map(item =>
+          item.territorio)
 
-    }
+      )];
 
+
+    const territorioSelect =
+      document.getElementById("territorio");
+
+
+    territorioSelect.innerHTML =
+      '<option value="">Selecione</option>';
+
+
+    territoriosUnicos.forEach(function(territorio){
+
+      const option =
+        document.createElement("option");
+
+      option.value = territorio;
+
+      option.textContent = territorio;
+
+      territorioSelect.appendChild(option);
+
+    });
+
+  }
+
+  catch(error) {
+
+    console.error(
+      "Erro ao carregar ruas:",
+      error
+    );
+
+  }
+
+}
 
 
     // TERRITÓRIO CHANGE
