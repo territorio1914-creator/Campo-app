@@ -287,13 +287,14 @@
 
 
     <!-- BOTÃO -->
+<button
+  id="submitBtn"
+  onclick="enviarFormulario()"
+>
 
-    <button onclick="enviarFormulario()">
+  Enviar Relatório
 
-      Enviar Relatório
-
-    </button>
-
+</button>
 
     <!-- SUCESSO -->
 
@@ -436,7 +437,15 @@
         status: status
 
       };
+// LOADING
 
+const btn =
+  document.getElementById("submitBtn");
+
+btn.disabled = true;
+
+btn.innerText =
+  "Enviando...";
 
 
       try {
@@ -482,7 +491,12 @@
           .getElementById("status")
           .value = "";
 
+// RESTORE BUTTON
 
+btn.disabled = false;
+
+btn.innerText =
+  "Enviar Relatório";
 
         setTimeout(function(){
 
@@ -501,6 +515,12 @@
         alert(
           "Erro ao enviar relatório."
         );
+
+btn.disabled = false;
+
+btn.innerText =
+  "Enviar Relatório";
+
 
       }
 
