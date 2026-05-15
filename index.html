@@ -85,6 +85,7 @@
     button:disabled{
 
       background:gray;
+      cursor:not-allowed;
 
     }
 
@@ -109,11 +110,12 @@
   <form id="form">
 
 
+
     <!-- TERRITÓRIO -->
 
     <label>Território</label>
 
-    <select id="Território" required>
+    <select id="territorio" required>
 
       <option value="">
         Escolha
@@ -128,17 +130,22 @@
 
 
 
+
+
     <!-- RUA -->
 
     <label>Rua</label>
 
-    <select id="rua" required>
+    <select id="rua"
+            required>
 
       <option value="">
         Escolha uma rua
       </option>
 
     </select>
+
+
 
 
 
@@ -152,12 +159,16 @@
 
 
 
+
+
     <!-- OBSERVAÇÃO -->
 
     <label>Observação</label>
 
     <textarea id="observacao"
               rows="4"></textarea>
+
+
 
 
 
@@ -196,6 +207,8 @@
 
 
 
+
+
     <!-- BOTÃO -->
 
     <button type="submit"
@@ -206,7 +219,10 @@
     </button>
 
 
-    <!-- MENSAGEM -->
+
+
+
+    <!-- MESSAGE -->
 
     <div class="message"
          id="message"></div>
@@ -214,6 +230,8 @@
   </form>
 
 </div>
+
+
 
 
 
@@ -228,7 +246,17 @@ let todasRuas = [];
 
 
 
-/* CARREGAR RUAS */
+const territorioSelect =
+  document.getElementById("territorio");
+
+const ruaSelect =
+  document.getElementById("rua");
+
+
+
+/* =========================
+   CARREGAR RUAS
+========================= */
 
 async function carregarRuas() {
 
@@ -240,64 +268,76 @@ async function carregarRuas() {
     todasRuas =
       await response.json();
 
-    console.log(todasRuas);
+    console.log("RUAS:", todasRuas);
 
-  } catch(error) {
+  }
 
-    console.error(error);
+  catch(error) {
+
+    console.error("ERRO:", error);
 
   }
 
 }
 
 
-carregarRuas();
+
+/* =========================
+   TROCAR TERRITÓRIO
+========================= */
+
+territorioSelect.addEventListener("change", async function () {
+
+  // garantir chargement
+
+  if(todasRuas.length === 0){
+
+    await carregarRuas();
+
+  }
+
+
+  const territorioSelecionado =
+    this.value.trim();
+
+
+  ruaSelect.innerHTML =
+    '<option value="">Escolha uma rua</option>';
 
 
 
-/* TROCAR TERRITÓRIO */
+  const ruasFiltradas =
+    todasRuas.filter(item =>
 
-document
-  .getElementById("Território")
-  .addEventListener("change", function () {
+      item.territorio.trim() ===
+      territorioSelecionado
 
-    const Território =
-      this.value;
-
-    const ruaSelect =
-      document.getElementById("rua");
+    );
 
 
-    ruaSelect.innerHTML =
-      '<option value="">Escolha uma rua</option>';
 
+  ruasFiltradas.forEach(item => {
 
-    const ruasFiltradas =
-      todasRuas.filter(item =>
-        item.Território === Território
-      );
+    const option =
+      document.createElement("option");
 
+    option.value =
+      item.rua;
 
-    ruasFiltradas.forEach(item => {
+    option.textContent =
+      item.rua;
 
-      const option =
-        document.createElement("option");
+    ruaSelect.appendChild(option);
 
-      option.value =
-        item.rua;
-
-      option.textContent =
-        item.rua;
-
-      ruaSelect.appendChild(option);
-
-    });
+  });
 
 });
 
 
 
-/* ENVIAR FORMULÁRIO */
+/* =========================
+   ENVIAR FORMULÁRIO
+========================= */
 
 document
   .getElementById("form")
@@ -319,20 +359,20 @@ document
 
     const data = {
 
-      Território:
-        document.getElementById("Território").value,
+      territorio:
+        territorioSelect.value.trim(),
 
       rua:
-        document.getElementById("rua").value,
+        ruaSelect.value.trim(),
 
       numero:
-        document.getElementById("numero").value,
+        document.getElementById("numero").value.trim(),
 
       observacao:
-        document.getElementById("observacao").value,
+        document.getElementById("observacao").value.trim(),
 
       status:
-        document.getElementById("status").value
+        document.getElementById("status").value.trim()
 
     };
 
@@ -360,7 +400,13 @@ document
         .reset();
 
 
-    } catch(error) {
+      ruaSelect.innerHTML =
+        '<option value="">Escolha uma rua</option>';
+
+
+    }
+
+    catch(error) {
 
       console.error(error);
 
@@ -378,6 +424,14 @@ document
     btn.innerText = "Salvar";
 
 });
+
+
+
+/* =========================
+   INICIAR
+========================= */
+
+carregarRuas();
 
 </script>
 
