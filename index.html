@@ -2,36 +2,219 @@
 <html lang="pt">
 
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-  <title>Teste Ruas</title>
+  <title>Controle Predikazione</title>
+
+  <style>
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+
+      margin:0;
+      padding:20px;
+      background:#f2f4f7;
+      font-family:Arial,sans-serif;
+
+    }
+
+    .container{
+
+      max-width:500px;
+      margin:auto;
+      background:white;
+      padding:20px;
+      border-radius:16px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+    }
+
+    h2{
+
+      text-align:center;
+      margin-bottom:20px;
+
+    }
+
+    label{
+
+      display:block;
+      margin-top:15px;
+      font-weight:bold;
+
+    }
+
+    input,
+    select,
+    textarea,
+    button{
+
+      width:100%;
+      padding:14px;
+      margin-top:6px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      font-size:16px;
+
+    }
+
+    textarea{
+
+      resize:vertical;
+
+    }
+
+    button{
+
+      background:#0b57d0;
+      color:white;
+      border:none;
+      margin-top:25px;
+      font-weight:bold;
+      cursor:pointer;
+
+    }
+
+    button:disabled{
+
+      background:gray;
+
+    }
+
+    .message{
+
+      text-align:center;
+      margin-top:15px;
+      font-weight:bold;
+
+    }
+
+  </style>
+
 </head>
 
 <body>
 
-<h1>Teste Dropdown</h1>
+<div class="container">
 
-<select id="territorio">
+  <h2>Relatório de Campo</h2>
 
-  <option value="">Escolha</option>
-
-  <option value="T1">T1</option>
-  <option value="T2">T2</option>
-  <option value="T3">T3</option>
-  <option value="T4">T4</option>
-
-</select>
+  <form id="form">
 
 
-<select id="rua">
+    <!-- TERRITÓRIO -->
 
-  <option value="">
-    Escolha uma rua
-  </option>
+    <label>Território</label>
 
-</select>
+    <select id="territorio" required>
+
+      <option value="">
+        Escolha
+      </option>
+
+      <option value="T1">T1</option>
+      <option value="T2">T2</option>
+      <option value="T3">T3</option>
+      <option value="T4">T4</option>
+
+    </select>
+
+
+
+    <!-- RUA -->
+
+    <label>Rua</label>
+
+    <select id="rua" required>
+
+      <option value="">
+        Escolha uma rua
+      </option>
+
+    </select>
+
+
+
+    <!-- NÚMERO -->
+
+    <label>Número</label>
+
+    <input type="number"
+           id="numero"
+           required>
+
+
+
+    <!-- OBSERVAÇÃO -->
+
+    <label>Observação</label>
+
+    <textarea id="observacao"
+              rows="4"></textarea>
+
+
+
+    <!-- STATUS -->
+
+    <label>Status</label>
+
+    <select id="status"
+            required>
+
+      <option value="">
+        Escolha
+      </option>
+
+      <option value="Falado">
+        Falado
+      </option>
+
+      <option value="Ocupado">
+        Ocupado
+      </option>
+
+      <option value="Não em casa">
+        Não em casa
+      </option>
+
+      <option value="Não Aceito">
+        Não Aceito
+      </option>
+
+      <option value="Carta">
+        Carta
+      </option>
+
+    </select>
+
+
+
+    <!-- BOTÃO -->
+
+    <button type="submit"
+            id="btn">
+
+      Salvar
+
+    </button>
+
+
+    <!-- MENSAGEM -->
+
+    <div class="message"
+         id="message"></div>
+
+  </form>
+
+</div>
+
 
 
 <script>
@@ -40,7 +223,9 @@ const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbzvI2BYE4ibw6aGua5R4iN21lISP1PRynHwVrggs10JqyhSYrqnkuswS6pWaXIvP5_6/exec";
 
 
+
 let todasRuas = [];
+
 
 
 /* CARREGAR RUAS */
@@ -69,6 +254,7 @@ async function carregarRuas() {
 carregarRuas();
 
 
+
 /* TROCAR TERRITÓRIO */
 
 document
@@ -81,16 +267,15 @@ document
     const ruaSelect =
       document.getElementById("rua");
 
+
     ruaSelect.innerHTML =
       '<option value="">Escolha uma rua</option>';
-
 
 
     const ruasFiltradas =
       todasRuas.filter(item =>
         item.territorio === territorio
       );
-
 
 
     ruasFiltradas.forEach(item => {
@@ -107,6 +292,90 @@ document
       ruaSelect.appendChild(option);
 
     });
+
+});
+
+
+
+/* ENVIAR FORMULÁRIO */
+
+document
+  .getElementById("form")
+  .addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const btn =
+      document.getElementById("btn");
+
+    const message =
+      document.getElementById("message");
+
+
+    btn.disabled = true;
+
+    btn.innerText = "Salvando...";
+
+
+    const data = {
+
+      territorio:
+        document.getElementById("territorio").value,
+
+      rua:
+        document.getElementById("rua").value,
+
+      numero:
+        document.getElementById("numero").value,
+
+      observacao:
+        document.getElementById("observacao").value,
+
+      status:
+        document.getElementById("status").value
+
+    };
+
+
+    try {
+
+      await fetch(SCRIPT_URL, {
+
+        method:"POST",
+
+        body:JSON.stringify(data)
+
+      });
+
+
+      message.style.color =
+        "green";
+
+      message.innerText =
+        "Salvo com sucesso.";
+
+
+      document
+        .getElementById("form")
+        .reset();
+
+
+    } catch(error) {
+
+      console.error(error);
+
+      message.style.color =
+        "red";
+
+      message.innerText =
+        "Erro ao salvar.";
+
+    }
+
+
+    btn.disabled = false;
+
+    btn.innerText = "Salvar";
 
 });
 
