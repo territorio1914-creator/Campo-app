@@ -1,139 +1,49 @@
 <!DOCTYPE html>
-<html lang="ht">
+<html lang="pt">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-  <title>Controle Predikasyon</title>
-
-  <style>
-
-    *{
-      box-sizing:border-box;
-    }
-
-    body{
-      margin:0;
-      padding:20px;
-      background:#f2f4f7;
-      font-family:Arial,sans-serif;
-    }
-
-    .container{
-      max-width:500px;
-      margin:auto;
-      background:white;
-      padding:20px;
-      border-radius:16px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    h2{
-      text-align:center;
-      margin-bottom:20px;
-    }
-
-    label{
-      display:block;
-      margin-top:15px;
-      font-weight:bold;
-    }
-
-    input,
-    select,
-    textarea,
-    button{
-
-      width:100%;
-      padding:14px;
-      margin-top:6px;
-      border-radius:10px;
-      border:1px solid #ccc;
-      font-size:16px;
-    }
-
-    button{
-      background:#0b57d0;
-      color:white;
-      border:none;
-      margin-top:25px;
-      font-weight:bold;
-    }
-
-    button:disabled{
-      background:gray;
-    }
-
-    .message{
-      text-align:center;
-      margin-top:15px;
-      font-weight:bold;
-    }
-
-  </style>
+  <title>Teste Ruas</title>
 </head>
 
 <body>
 
-<div class="container">
+<h1>Teste Dropdown</h1>
 
-  <h2>Relatório de Campo</h2>
+<select id="territorio">
 
-  <form id="form">
+  <option value="">Escolha</option>
 
-    <label>Território</label>
+  <option value="T1">T1</option>
+  <option value="T2">T2</option>
+  <option value="T3">T3</option>
+  <option value="T4">T4</option>
 
-    <select id="territorio" required>
-      <option value="">Escolha</option>
-      <option value="T1">T1</option>
-      <option value="T2">T2</option>
-      <option value="T3">T3</option>
-    </select>
+</select>
 
-    <label>Rua</label>
-    <input type="text" id="rua" required>
 
-    <label>Número</label>
-    <input type="number" id="numero" required>
+<select id="rua">
 
-    <label>Observação</label>
-    <textarea id="observacao"></textarea>
+  <option value="">
+    Escolha uma rua
+  </option>
 
-    <label>Status</label>
+</select>
 
-    <select id="status" required>
-      <option value="">Escolha</option>
-      <option value="Falado">Falado</option>
-      <option value="Ocupado">Ocupado</option>
-      <option value="Não em casa">Não em casa</option>
-      <option value="Não Aceito">Não Aceito</option>
-      <option value="Carta">Carta</option>
-    </select>
-
-    <button type="submit" id="btn">
-      Salvar
-    </button>
-
-    <div class="message" id="message"></div>
-
-  </form>
-
-</div>
 
 <script>
 
 const SCRIPT_URL =
-"https://territorio1914-creator.github.io/Campo-app/";
-
-
-const form =
-document.getElementById("form");
+"https://script.google.com/macros/s/AKfycbzvI2BYE4ibw6aGua5R4iN21lISP1PRynHwVrggs10JqyhSYrqnkuswS6pWaXIvP5_6/exec";
 
 
 let todasRuas = [];
 
 
-/* CHARGER RUAS */
+/* CARREGAR RUAS */
 
 async function carregarRuas() {
 
@@ -147,26 +57,25 @@ async function carregarRuas() {
 
     console.log(todasRuas);
 
-  } catch (error) {
+  } catch(error) {
 
     console.error(error);
 
   }
+
 }
 
-
-/* LANCER CHARGEMENT */
 
 carregarRuas();
 
 
-/* FILTRER PAR TERRITOIRE */
+/* TROCAR TERRITÓRIO */
 
 document
   .getElementById("territorio")
   .addEventListener("change", function () {
 
-    const territorioSelecionado =
+    const territorio =
       this.value;
 
     const ruaSelect =
@@ -175,92 +84,29 @@ document
     ruaSelect.innerHTML =
       '<option value="">Escolha uma rua</option>';
 
+
+
     const ruasFiltradas =
       todasRuas.filter(item =>
-        item.territorio === territorioSelecionado
+        item.territorio === territorio
       );
+
+
 
     ruasFiltradas.forEach(item => {
 
       const option =
         document.createElement("option");
 
-      option.value = item.rua;
+      option.value =
+        item.rua;
 
-      option.textContent = item.rua;
+      option.textContent =
+        item.rua;
 
       ruaSelect.appendChild(option);
 
     });
-
-});
-
-
-/* ENVOYER FORMULAIRE */
-
-form.addEventListener("submit", async (e) => {
-
-  e.preventDefault();
-
-  const btn =
-    document.getElementById("btn");
-
-  const message =
-    document.getElementById("message");
-
-  btn.disabled = true;
-
-  btn.innerText = "Salvando...";
-
-
-  const data = {
-
-    territorio:
-      document.getElementById("territorio").value,
-
-    rua:
-      document.getElementById("rua").value,
-
-    numero:
-      document.getElementById("numero").value,
-
-    observacao:
-      document.getElementById("observacao").value,
-
-    status:
-      document.getElementById("status").value
-  };
-
-
-  try {
-
-    await fetch(SCRIPT_URL, {
-
-      method: "POST",
-
-      body: JSON.stringify(data)
-
-    });
-
-    message.style.color = "green";
-
-    message.innerText =
-      "Salvo com sucesso.";
-
-    form.reset();
-
-  } catch (error) {
-
-    message.style.color = "red";
-
-    message.innerText =
-      "Erro ao salvar.";
-
-  }
-
-  btn.disabled = false;
-
-  btn.innerText = "Salvar";
 
 });
 
