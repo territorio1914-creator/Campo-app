@@ -113,7 +113,7 @@
 
     <label>Território</label>
 
-    <select id="territorio" required>
+    <select id="Território" required>
 
       <option value="">
         Escolha
@@ -258,10 +258,10 @@ carregarRuas();
 /* TROCAR TERRITÓRIO */
 
 document
-  .getElementById("territorio")
+  .getElementById("Território")
   .addEventListener("change", function () {
 
-    const territorio =
+    const Território =
       this.value;
 
     const ruaSelect =
@@ -274,7 +274,7 @@ document
 
     const ruasFiltradas =
       todasRuas.filter(item =>
-        item.territorio === territorio
+        item.Território === Território
       );
 
 
@@ -319,8 +319,8 @@ document
 
     const data = {
 
-      territorio:
-        document.getElementById("territorio").value,
+      Território:
+        document.getElementById("Território").value,
 
       rua:
         document.getElementById("rua").value,
