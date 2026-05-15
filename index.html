@@ -122,19 +122,96 @@
 
 <script>
 
-const SCRIPT_URL = "METE_URL_ISIT";
+const SCRIPT_URL =
+"https://territorio1914-creator.github.io/Campo-app/";
 
-const form = document.getElementById("form");
 
-form.addEventListener("submit", async (e)=>{
+const form =
+document.getElementById("form");
+
+
+let todasRuas = [];
+
+
+/* CHARGER RUAS */
+
+async function carregarRuas() {
+
+  try {
+
+    const response =
+      await fetch(SCRIPT_URL);
+
+    todasRuas =
+      await response.json();
+
+    console.log(todasRuas);
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+}
+
+
+/* LANCER CHARGEMENT */
+
+carregarRuas();
+
+
+/* FILTRER PAR TERRITOIRE */
+
+document
+  .getElementById("territorio")
+  .addEventListener("change", function () {
+
+    const territorioSelecionado =
+      this.value;
+
+    const ruaSelect =
+      document.getElementById("rua");
+
+    ruaSelect.innerHTML =
+      '<option value="">Escolha uma rua</option>';
+
+    const ruasFiltradas =
+      todasRuas.filter(item =>
+        item.territorio === territorioSelecionado
+      );
+
+    ruasFiltradas.forEach(item => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = item.rua;
+
+      option.textContent = item.rua;
+
+      ruaSelect.appendChild(option);
+
+    });
+
+});
+
+
+/* ENVOYER FORMULAIRE */
+
+form.addEventListener("submit", async (e) => {
 
   e.preventDefault();
 
-  const btn = document.getElementById("btn");
-  const message = document.getElementById("message");
+  const btn =
+    document.getElementById("btn");
+
+  const message =
+    document.getElementById("message");
 
   btn.disabled = true;
+
   btn.innerText = "Salvando...";
+
 
   const data = {
 
@@ -154,28 +231,35 @@ form.addEventListener("submit", async (e)=>{
       document.getElementById("status").value
   };
 
-  try{
 
-    await fetch(SCRIPT_URL,{
+  try {
 
-      method:"POST",
-      body:JSON.stringify(data)
+    await fetch(SCRIPT_URL, {
+
+      method: "POST",
+
+      body: JSON.stringify(data)
 
     });
 
     message.style.color = "green";
-    message.innerText = "Salvo com sucesso.";
+
+    message.innerText =
+      "Salvo com sucesso.";
 
     form.reset();
 
-  }catch(error){
+  } catch (error) {
 
     message.style.color = "red";
-    message.innerText = "Erro ao salvar.";
+
+    message.innerText =
+      "Erro ao salvar.";
 
   }
 
   btn.disabled = false;
+
   btn.innerText = "Salvar";
 
 });
