@@ -338,215 +338,104 @@
 
 
 
- <script>
+  <script>
 
-  // URL API
+    // URL API
 
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbz92OWPm4oNWxljE8zG4rzVXp2ljNGR17bQt6VtfTKNdsrg-4gauxWsOMwaG3N0rHkA/exec";
-
-
-
-  let senhaLiberada = "";
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbz92OWPm4oNWxljE8zG4rzVXp2ljNGR17bQt6VtfTKNdsrg-4gauxWsOMwaG3N0rHkA/exec";
 
 
 
-  // LOGIN
 
-  async function entrar() {
+      
+    // CHARGER RUAS
 
-    const senha =
-      document.getElementById("senha").value;
+async function chargerRuas() {
 
-    if (!senha) {
+  try {
 
-      alert("Digite a senha.");
+    const response =
+      await fetch(API_URL);
 
-      return;
+    const data =
+      await response.json();
 
-    }
+    window.ruasData = data;
 
-    try {
 
-      const response =
-        await fetch(API_URL, {
+    // TERRITÓRIOS ÚNICOS
 
-          method: "POST",
+    const territoriosUnicos =
+      [...new Set(
 
-          body: JSON.stringify({
+        data.map(item =>
+          item.territorio)
 
-            senha: senha,
+      )];
 
-            territorio: "teste",
-            rua: "teste",
-            numero: "teste",
-            observacao: "teste",
-            status: "teste",
 
-            verificarSenha: true
+    const territorioSelect =
+      document.getElementById("territorio");
 
-          })
 
-        });
+    territorioSelect.innerHTML =
+      '<option value="">Selecione</option>';
 
-      const resultado =
-        await response.json();
 
-      if (resultado.result === "success") {
+    territoriosUnicos.forEach(function(territorio){
 
-        senhaLiberada = senha;
+      const option =
+        document.createElement("option");
 
-        localStorage.setItem(
-          "senhaSistema",
-          senha
-        );
+      option.value = territorio;
 
-        document
-          .getElementById("loginContainer")
-          .style.display = "none";
+      option.textContent = territorio;
 
-        document
-          .getElementById("formContainer")
-          .style.display = "block";
+      territorioSelect.appendChild(option);
 
-      }
-
-      else {
-
-        alert("Senha incorreta.");
-
-      }
-
-    }
-
-    catch(error) {
-
-      console.error(error);
-
-      alert("Erro ao verificar senha.");
-
-    }
+    });
 
   }
 
+  catch(error) {
 
-
-  // AUTO LOGIN
-
-  const senhaSalva =
-    localStorage.getItem(
-      "senhaSistema"
+    console.error(
+      "Erro ao carregar ruas:",
+      error
     );
 
-  if (senhaSalva) {
-
-    senhaLiberada =
-      senhaSalva;
-
-    document
-      .getElementById("loginContainer")
-      .style.display = "none";
-
-    document
-      .getElementById("formContainer")
-      .style.display = "block";
-
   }
 
+}
 
 
-  // CHARGER RUAS
+    // TERRITÓRIO CHANGE
 
-  async function chargerRuas() {
+    document
+      .getElementById("territorio")
+      .addEventListener("change", function () {
 
-    try {
+        const territorio =
+          this.value;
 
-      const response =
-        await fetch(API_URL);
+        const ruaSelect =
+          document.getElementById("rua");
 
-      const data =
-        await response.json();
+        ruaSelect.innerHTML =
+          '<option value="">Selecione</option>';
 
-      window.ruasData = data;
+        const ruasFiltradas =
+          window.ruasData.filter(function(item){
 
+            return item.territorio === territorio;
 
+          });
 
-      // TERRITÓRIOS ÚNICOS
+        ruasFiltradas.forEach(function(item){
 
-      const territoriosUnicos =
-        [...new Set(
-
-          data.map(item =>
-            item.territorio)
-
-        )];
-
-
-
-      const territorioSelect =
-        document.getElementById("territorio");
-
-
-
-      territorioSelect.innerHTML =
-        '<option value="">Selecione</option>';
-
-
-
-      territoriosUnicos.forEach(function(territorio){
-
-        const option =
-          document.createElement("option");
-
-        option.value = territorio;
-
-        option.textContent = territorio;
-
-        territorioSelect.appendChild(option);
-
-      });
-
-    }
-
-    catch(error) {
-
-      console.error(
-        "Erro ao carregar ruas:",
-        error
-      );
-
-    }
-
-  }
-
-
-
-  // TERRITÓRIO CHANGE
-
-  document
-    .getElementById("territorio")
-    .addEventListener("change", function () {
-
-      const territorio =
-        this.value;
-
-      const ruaSelect =
-        document.getElementById("rua");
-
-      ruaSelect.innerHTML =
-        '<option value="">Selecione</option>';
-
-      const ruasFiltradas =
-        window.ruasData.filter(function(item){
-
-          return item.territorio === territorio;
-
-        });
-
-      ruasFiltradas.forEach(function(item){
-
-        const option =
-          document.createElement("option");
+          const option =
+            document.createElement("option");
 
           option.value = item.rua;
 
@@ -554,176 +443,165 @@
 
           ruaSelect.appendChild(option);
 
-      });
-
-    });
-
-
-
-  // ENVIAR FORMULÁRIO
-
-  async function enviarFormulario() {
-
-    const territorio =
-      document.getElementById("territorio").value;
-
-    const rua =
-      document.getElementById("rua").value;
-
-    const numero =
-      document.getElementById("numero").value;
-
-    const observacao =
-      document.getElementById("observacao").value;
-
-    const status =
-      document.getElementById("status").value;
-
-
-
-    // VALIDATION
-
-    if (
-      !territorio ||
-      !rua ||
-      !numero ||
-      !status
-    ) {
-
-      alert(
-        "Preencha todos os campos obrigatórios."
-      );
-
-      return;
-
-    }
-
-
-
-    const dados = {
-
-      senha: senhaLiberada,
-
-      territorio: territorio,
-      rua: rua,
-      numero: numero,
-      observacao: observacao,
-      status: status
-
-    };
-
-
-
-    // LOADING
-
-    const btn =
-      document.getElementById("submitBtn");
-
-    btn.disabled = true;
-
-    btn.innerText =
-      "Enviando...";
-
-
-
-    try {
-
-      await fetch(API_URL, {
-
-        method: "POST",
-
-        body: JSON.stringify(dados)
+        });
 
       });
 
 
 
-      // SUCCESS
+    // ENVIAR FORMULÁRIO
 
-      document
-        .getElementById("successMessage")
-        .style.display = "block";
+    async function enviarFormulario() {
+
+      const territorio =
+        document.getElementById("territorio").value;
+
+      const rua =
+        document.getElementById("rua").value;
+
+      const numero =
+        document.getElementById("numero").value;
+
+      const observacao =
+        document.getElementById("observacao").value;
+
+      const status =
+        document.getElementById("status").value;
 
 
 
-      // VIBRATION
+      // VALIDATION
 
-      if (navigator.vibrate) {
+      if (
+        !territorio ||
+        !rua ||
+        !numero ||
+        !status
+      ) {
 
-        navigator.vibrate(200);
+        alert(
+          "Preencha todos os campos obrigatórios."
+        );
+
+        return;
 
       }
 
 
 
-      // RESET
+      const dados = {
 
-      document
-        .getElementById("territorio")
-        .value = "";
+        territorio: territorio,
+        rua: rua,
+        numero: numero,
+        observacao: observacao,
+        status: status
 
-      document
-        .getElementById("rua")
-        .innerHTML =
-        '<option value="">Selecione um território primeiro</option>';
+      };
+// LOADING
 
-      document
-        .getElementById("numero")
-        .value = "";
+const btn =
+  document.getElementById("submitBtn");
 
-      document
-        .getElementById("observacao")
-        .value = "";
+btn.disabled = true;
 
-      document
-        .getElementById("status")
-        .value = "";
+btn.innerText =
+  "Enviando...";
 
 
+      try {
 
-      // RESTORE BUTTON
+        await fetch(API_URL, {
 
-      btn.disabled = false;
+          method: "POST",
 
-      btn.innerText =
-        "Enviar Relatório";
+          body: JSON.stringify(dados)
+
+        });
 
 
 
-      setTimeout(function(){
+        // SUCCESS
 
         document
           .getElementById("successMessage")
-          .style.display = "none";
+          .style.display = "block";
 
-      }, 3000);
+          // VIBRATION
+
+if (navigator.vibrate) {
+
+  navigator.vibrate(200);
+
+}
+
+
+
+        // RESET
+
+        document
+          .getElementById("territorio")
+          .value = "";
+
+        document
+          .getElementById("rua")
+          .innerHTML =
+          '<option value="">Selecione um território primeiro</option>';
+
+        document
+          .getElementById("numero")
+          .value = "";
+
+        document
+          .getElementById("observacao")
+          .value = "";
+
+        document
+          .getElementById("status")
+          .value = "";
+
+// RESTORE BUTTON
+
+btn.disabled = false;
+
+btn.innerText =
+  "Enviar Relatório";
+
+        setTimeout(function(){
+
+          document
+            .getElementById("successMessage")
+            .style.display = "none";
+
+        }, 3000);
+
+      }
+
+      catch(error) {
+
+        console.error(error);
+
+        alert(
+          "Erro ao enviar relatório."
+        );
+
+btn.disabled = false;
+
+btn.innerText =
+  "Enviar Relatório";
+
+
+      }
 
     }
 
-    catch(error) {
-
-      console.error(error);
-
-      alert(
-        "Erro ao enviar relatório."
-      );
-
-      btn.disabled = false;
-
-      btn.innerText =
-        "Enviar Relatório";
-
-    }
-
-  }
 
 
+    // INIT
 
-  // INIT
+    chargerRuas();
 
-  chargerRuas();
-
-</script>
+  </script>
 
 </body>
 </html>
