@@ -348,7 +348,34 @@
 
 
 
-      
+let senhaLiberada = "";
+
+async function entrar() {
+
+  const senha =
+    document.getElementById("senha").value;
+
+  if (!senha) {
+
+    alert("Digite a senha.");
+
+    return;
+
+  }
+
+  senhaLiberada = senha;
+
+  document
+    .getElementById("loginContainer")
+    .style.display = "none";
+
+  document
+    .getElementById("formContainer")
+    .style.display = "block";
+
+}
+
+
     // CHARGER RUAS
 
 async function chargerRuas() {
@@ -489,15 +516,17 @@ async function chargerRuas() {
 
 
 
-      const dados = {
+    const dados = {
 
-        territorio: territorio,
-        rua: rua,
-        numero: numero,
-        observacao: observacao,
-        status: status
+  senha: senhaLiberada,
 
-      };
+  territorio: territorio,
+  rua: rua,
+  numero: numero,
+  observacao: observacao,
+  status: status
+
+};
 // LOADING
 
 const btn =
