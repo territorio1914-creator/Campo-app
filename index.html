@@ -164,7 +164,43 @@
 
 <body>
 
-  <div class="container">
+  <!-- LOGIN -->
+
+<div class="container" id="loginContainer">
+
+  <h1>
+    Acesso
+  </h1>
+
+  <p class="subtitle">
+    Digite a senha para continuar.
+  </p>
+
+  <div class="field">
+
+    <label>
+      Senha
+    </label>
+
+    <input
+      type="password"
+      id="senha"
+      placeholder="Digite a senha"
+    >
+
+  </div>
+
+  <button onclick="entrar()">
+    Entrar
+  </button>
+
+</div>
+
+  <div
+  class="container"
+  id="formContainer"
+  style="display:none;"
+>
 
     <h1>
       Relatório de Campo
@@ -311,6 +347,35 @@
 
 
 
+
+let senhaLiberada = "";
+
+async function entrar() {
+
+  const senha =
+    document.getElementById("senha").value;
+
+  if (!senha) {
+
+    alert("Digite a senha.");
+
+    return;
+
+  }
+
+  senhaLiberada = senha;
+
+  document
+    .getElementById("loginContainer")
+    .style.display = "none";
+
+  document
+    .getElementById("formContainer")
+    .style.display = "block";
+
+}
+
+
     // CHARGER RUAS
 
 async function chargerRuas() {
@@ -451,15 +516,17 @@ async function chargerRuas() {
 
 
 
-      const dados = {
+    const dados = {
 
-        territorio: territorio,
-        rua: rua,
-        numero: numero,
-        observacao: observacao,
-        status: status
+  senha: senhaLiberada,
 
-      };
+  territorio: territorio,
+  rua: rua,
+  numero: numero,
+  observacao: observacao,
+  status: status
+
+};
 // LOADING
 
 const btn =
