@@ -164,43 +164,7 @@
 
 <body>
 
-  <!-- LOGIN -->
-
-<div class="container" id="loginContainer">
-
-  <h1>
-    Acesso
-  </h1>
-
-  <p class="subtitle">
-    Digite a senha para continuar.
-  </p>
-
-  <div class="field">
-
-    <label>
-      Senha
-    </label>
-
-    <input
-      type="password"
-      id="senha"
-      placeholder="Digite a senha"
-    >
-
-  </div>
-
-  <button onclick="entrar()">
-    Entrar
-  </button>
-
-</div>
-
-  <div
-  class="container"
-  id="formContainer"
-  style="display:none;"
->
+  <div class="container">
 
     <h1>
       Relatório de Campo
@@ -219,13 +183,18 @@
         Território
       </label>
 
-    <select id="territorio">
+      <select id="territorio">
 
-  <option value="">
-    Carregando territórios...
-  </option>
+        <option value="">
+          Selecione
+        </option>
 
-  </select>
+        <option value="T1">T1</option>
+        <option value="T2">T2</option>
+        <option value="T3">T3</option>
+        <option value="T4">T4</option>
+
+      </select>
 
     </div>
 
@@ -292,21 +261,21 @@
 
       <select id="status">
 
-       <option>
-  Não em casa
-</option>
+        <option value="">
+          Selecione
+        </option>
 
-<option>
-  Ocupado
-</option>
+        <option>
+          Concluído
+        </option>
 
-<option selected>
-  Falado ou Não Aceito
-</option>
+        <option>
+          Revisitar
+        </option>
 
-<option>
-  Carta
-</option>
+        <option>
+          Não interessado
+        </option>
 
       </select>
 
@@ -314,14 +283,13 @@
 
 
     <!-- BOTÃO -->
-<button
-  id="submitBtn"
-  onclick="enviarFormulario()"
->
 
-  Enviar Relatório
+    <button onclick="enviarFormulario()">
 
-</button>
+      Enviar Relatório
+
+    </button>
+
 
     <!-- SUCESSO -->
 
@@ -347,94 +315,33 @@
 
 
 
-
-let senhaLiberada = "";
-
-async function entrar() {
-
-  const senha =
-    document.getElementById("senha").value;
-
-  if (!senha) {
-
-    alert("Digite a senha.");
-
-    return;
-
-  }
-
-  senhaLiberada = senha;
-
-  document
-    .getElementById("loginContainer")
-    .style.display = "none";
-
-  document
-    .getElementById("formContainer")
-    .style.display = "block";
-
-}
-
-
     // CHARGER RUAS
 
-async function chargerRuas() {
+    async function chargerRuas() {
 
-  try {
+      try {
 
-    const response =
-      await fetch(API_URL);
+        const response =
+          await fetch(API_URL);
 
-    const data =
-      await response.json();
+        const data =
+          await response.json();
 
-    window.ruasData = data;
+        window.ruasData = data;
 
+      }
 
-    // TERRITÓRIOS ÚNICOS
+      catch(error) {
 
-    const territoriosUnicos =
-      [...new Set(
+        console.error(
+          "Erro ao carregar ruas:",
+          error
+        );
 
-        data.map(item =>
-          item.territorio)
+      }
 
-      )];
+    }
 
-
-    const territorioSelect =
-      document.getElementById("territorio");
-
-
-    territorioSelect.innerHTML =
-      '<option value="">Selecione</option>';
-
-
-    territoriosUnicos.forEach(function(territorio){
-
-      const option =
-        document.createElement("option");
-
-      option.value = territorio;
-
-      option.textContent = territorio;
-
-      territorioSelect.appendChild(option);
-
-    });
-
-  }
-
-  catch(error) {
-
-    console.error(
-      "Erro ao carregar ruas:",
-      error
-    );
-
-  }
-
-}
 
 
     // TERRITÓRIO CHANGE
@@ -516,26 +423,16 @@ async function chargerRuas() {
 
 
 
-    const dados = {
+      const dados = {
 
-  senha: senhaLiberada,
+        territorio: territorio,
+        rua: rua,
+        numero: numero,
+        observacao: observacao,
+        status: status
 
-  territorio: territorio,
-  rua: rua,
-  numero: numero,
-  observacao: observacao,
-  status: status
+      };
 
-};
-// LOADING
-
-const btn =
-  document.getElementById("submitBtn");
-
-btn.disabled = true;
-
-btn.innerText =
-  "Enviando...";
 
 
       try {
@@ -555,14 +452,6 @@ btn.innerText =
         document
           .getElementById("successMessage")
           .style.display = "block";
-
-          // VIBRATION
-
-if (navigator.vibrate) {
-
-  navigator.vibrate(200);
-
-}
 
 
 
@@ -589,12 +478,7 @@ if (navigator.vibrate) {
           .getElementById("status")
           .value = "";
 
-// RESTORE BUTTON
 
-btn.disabled = false;
-
-btn.innerText =
-  "Enviar Relatório";
 
         setTimeout(function(){
 
@@ -614,12 +498,6 @@ btn.innerText =
           "Erro ao enviar relatório."
         );
 
-btn.disabled = false;
-
-btn.innerText =
-  "Enviar Relatório";
-
-
       }
 
     }
@@ -633,4 +511,4 @@ btn.innerText =
   </script>
 
 </body>
-</html>
+</html>z
