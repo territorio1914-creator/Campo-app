@@ -42,6 +42,8 @@
       box-shadow:
         0 4px 15px rgba(0,0,0,0.08);
 
+      margin-bottom:20px;
+
     }
 
     h1{
@@ -164,7 +166,52 @@
 
 <body>
 
-  <div class="container">
+
+
+  <!-- LOGIN -->
+
+  <div
+    class="container"
+    id="loginContainer"
+  >
+
+    <h1>
+      Acesso Restrito
+    </h1>
+
+    <p class="subtitle">
+      Digite a senha para continuar.
+    </p>
+
+    <div class="field">
+
+      <label>
+        Senha
+      </label>
+
+      <input
+        type="password"
+        id="senha"
+        placeholder="Digite a senha"
+      >
+
+    </div>
+
+    <button onclick="entrar()">
+      Entrar
+    </button>
+
+  </div>
+
+
+
+  <!-- FORMULÁRIO -->
+
+  <div
+    class="container"
+    id="formContainer"
+    style="display:none;"
+  >
 
     <h1>
       Relatório de Campo
@@ -173,6 +220,7 @@
     <p class="subtitle">
       Preencha as informações da visita.
     </p>
+
 
 
     <!-- TERRITÓRIO -->
@@ -199,6 +247,7 @@
     </div>
 
 
+
     <!-- RUA -->
 
     <div class="field">
@@ -218,6 +267,7 @@
     </div>
 
 
+
     <!-- NÚMERO -->
 
     <div class="field">
@@ -233,6 +283,7 @@
       >
 
     </div>
+
 
 
     <!-- OBSERVAÇÃO -->
@@ -251,6 +302,7 @@
     </div>
 
 
+
     <!-- STATUS -->
 
     <div class="field">
@@ -266,20 +318,29 @@
         </option>
 
         <option>
-          Concluído
+          Falado
         </option>
 
         <option>
-          Revisitar
+          Ocupado
         </option>
 
         <option>
-          Não interessado
+          Não em casa
+        </option>
+
+        <option>
+          Não Aceito
+        </option>
+
+        <option>
+          Carta
         </option>
 
       </select>
 
     </div>
+
 
 
     <!-- BOTÃO -->
@@ -289,6 +350,7 @@
       Enviar Relatório
 
     </button>
+
 
 
     <!-- SUCESSO -->
@@ -312,6 +374,80 @@
 
     const API_URL =
       "https://script.google.com/macros/s/AKfycbz92OWPm4oNWxljE8zG4rzVXp2ljNGR17bQt6VtfTKNdsrg-4gauxWsOMwaG3N0rHkA/exec";
+
+
+
+    // LOGIN
+
+    async function entrar() {
+
+      const senha =
+        document.getElementById("senha").value;
+
+      if (!senha) {
+
+        alert("Digite a senha.");
+
+        return;
+
+      }
+
+      try {
+
+        const response =
+          await fetch(API_URL, {
+
+            method: "POST",
+
+            body: JSON.stringify({
+
+              senha: senha,
+
+              territorio: "",
+              rua: "",
+              numero: "",
+              observacao: "",
+              status: ""
+
+            })
+
+          });
+
+        const result =
+          await response.json();
+
+        if (result.result === "error") {
+
+          alert("Senha incorreta.");
+
+          return;
+
+        }
+
+        localStorage.setItem(
+          "senhaCorreta",
+          senha
+        );
+
+        document
+          .getElementById("loginContainer")
+          .style.display = "none";
+
+        document
+          .getElementById("formContainer")
+          .style.display = "block";
+
+      }
+
+      catch(error) {
+
+        console.error(error);
+
+        alert("Erro ao conectar.");
+
+      }
+
+    }
 
 
 
@@ -425,6 +561,9 @@
 
       const dados = {
 
+        senha:
+          localStorage.getItem("senhaCorreta"),
+
         territorio: territorio,
         rua: rua,
         numero: numero,
@@ -508,7 +647,26 @@
 
     chargerRuas();
 
+
+
+    // AUTO LOGIN
+
+    const senhaSalva =
+      localStorage.getItem("senhaCorreta");
+
+    if (senhaSalva) {
+
+      document
+        .getElementById("loginContainer")
+        .style.display = "none";
+
+      document
+        .getElementById("formContainer")
+        .style.display = "block";
+
+    }
+
   </script>
 
 </body>
-</html>z
+</html>
