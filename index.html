@@ -352,18 +352,54 @@ let senhaLiberada = "";
 
 async function entrar() {
 
-  const senha =
-    document.getElementById("senha").value;
+const senha =
+document.getElementById("senha").value;
 
-  if (!senha) {
+if (!senha) {
 
-    alert("Digite a senha.");
+```
+alert("Digite a senha.");
 
-    return;
+return;
+```
 
-  }
+}
+
+try {
+
+```
+const response =
+  await fetch(API_URL, {
+
+    method: "POST",
+
+    body: JSON.stringify({
+
+      senha: senha,
+
+      territorio: "teste",
+      rua: "teste",
+      numero: "teste",
+      observacao: "teste",
+      status: "teste",
+
+      verificarSenha: true
+
+    })
+
+  });
+
+const resultado =
+  await response.json();
+
+if (resultado.result === "success") {
 
   senhaLiberada = senha;
+
+  localStorage.setItem(
+    "senhaSistema",
+    senha
+  );
 
   document
     .getElementById("loginContainer")
@@ -372,6 +408,27 @@ async function entrar() {
   document
     .getElementById("formContainer")
     .style.display = "block";
+
+}
+
+else {
+
+  alert("Senha incorreta.");
+
+}
+```
+
+}
+
+catch(error) {
+
+```
+console.error(error);
+
+alert("Erro ao verificar senha.");
+```
+
+}
 
 }
 
